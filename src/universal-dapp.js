@@ -7,6 +7,7 @@ var EthJSTX = require('ethereumjs-tx');
 var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
 var BN = ethJSUtil.BN;
+var crypto = require('crypto');
 
 function UniversalDApp (contracts, options) {
   this.options = options || {};
@@ -30,6 +31,14 @@ function UniversalDApp (contracts, options) {
     throw new Error('Either VM or Web3 mode must be selected');
   }
 }
+
+UniversalDApp.prototype.newAccount = function () {
+  var privateKey;
+  do {
+    privateKey = crypto.randomBytes(32);
+  } while (!ethJSUtil.isValidPrivate(privateKey));
+  this._addAccount(privateKey);
+};
 
 UniversalDApp.prototype.addAccount = function (privateKey, balance) {
   if (this.accounts) {
